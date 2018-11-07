@@ -11,6 +11,6 @@ $(document).ready(function () {
     var mainScreen = $(".container");
     for (var i=0; i<character.id.length; i++) {
         var char = $(".character");
-        $(char).append("<img>")
+        var 
     }
 }
