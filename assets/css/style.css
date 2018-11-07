@@ -5,6 +5,12 @@ body {
 }
 
 .character {
+    position: relative;
+    width: 300px;
+    display: inline-block;  
+  }
+
+.charPic {
     display: block;
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);  
@@ -12,16 +18,10 @@ body {
     transition: 1s ease;
 }
 
-.character:hover {
+.charPic:hover {
     -webkit-filter: grayscale(0);
     filter: grayscale(0);
 }
-
-.container {
-    position: relative;
-    width: 300px;
-    display: inline-block;  
-  }
   
 .overlay {
     position: absolute;
@@ -34,11 +34,11 @@ body {
     transition: .5s ease;
 }
   
-.container:hover .overlay {
-height: 50px;
-}
+.character:hover .overlay {
+    height: 50px;
+    }
 
-.name {
+.charName {
 font-size: 20px;
 font-weight: 700;
 position: absolute;
