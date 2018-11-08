@@ -11,14 +11,20 @@
 
     // Display characters
     var mainScreen = $(".container");
+
     for (var i=0; i<character.id.length; i++) {
-        var char = $("<div class='character'>");
+        // Put the element at the center of screen
+        var char = $("<div class='character'>").attr("id", character.id[i]).css({
+            "top" : Math.max(0, (($(window).height()-450)/2) + $(window).scrollTop()) +"px",
+            "left" : Math.max(0, (($(window).width()-300)/2) + $(window).scrollLeft()+i*300-450)  +"px"
+        });
+
         var pic = $("<img>").attr({
             alt: character.name[i],
             src: "./assets/images/" + character.id[i] + ".jpg",
             class: "charPic"
         });
-        var nameBox = $("<div class='overlay'>").attr("id", character.id[i]);
+        var nameBox = $("<div class='overlay'>").attr("id", character.id[i]+"Name");
         var nameText = $("<div class='charName'>").text(character.name[i]);
 
         $(nameBox).append(nameText);
@@ -28,5 +34,9 @@
 
         $(mainScreen).append(char);
     }
-    
+
+    $(".character").on("click", function() {
+        $(this).animate({'width': '150px'},'slow');
+      });
+
 // }
