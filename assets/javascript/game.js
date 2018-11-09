@@ -262,10 +262,11 @@ $(document).ready(function () {
                 left: (winWidth + i * 300 - 450)
             });
             $("#" + c + "Pic").css({
-                "-webkit-filter": "grayscale(100%) brightness(100%) blur(0px)",
-                filter: "grayscale(100%) brightness(100%) blur(0px)"
+                "-webkit-filter": "",
+                filter: ""
             });
-            $("#" + c + "Tag").css({ height: "50px", "background-color": character.clr[i] });
+            $("#" + c).css("width", "");
+            $("#" + c + "Tag").css({ height: "", "background-color": character.clr[i] });
             $("#" + c + "Name").text(c);
 
             $("#" + c).hide();
