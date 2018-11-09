@@ -47,6 +47,10 @@ for (var i = 0; i < character.id.length; i++) {
     $(mainScreen).append(char);
 }
 
+// Create and hide 'attack' button and 'vs' sign
+var atkBtn = $("<button id='attack'>").text("ATTACK");
+$(mainScreen).append(atkBtn);
+
 // Select characters
 $(".charPic").on("click", function () {
     if (gameStatus === "ready") {
@@ -151,6 +155,11 @@ function defeated(d) {
 // Fighting mode
 function fighting() {
     gameStatus = "fight";
+
+    var nameBox = $("<div class='overlay'>").attr("id", character.id[i] + "Tag");
+    var nameText = $("<div class='charName'>").text(character.name[i]).attr("id", character.id[i] + "Name");
+
+
 
 }
 
