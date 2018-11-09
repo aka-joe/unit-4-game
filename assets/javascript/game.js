@@ -16,11 +16,20 @@ $(document).ready(function () {
 
     var winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
     var winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
-
-    var gameStatus = "ready";
     var aniSpeed = 600;
 
-    // Display logo
+    // Game status
+    // 0 - Waiting to start the game
+    // 1 - Selecting main character and 1st opponent
+    // 2 - 1st fighting
+    // 3 - Selecting 2nd opponent
+    // 4 - 2nd fighting
+    // 5 - Last fighting
+    // 6 - User lose
+    // 7 - User win
+    var gameStatus = 0;
+
+    // Display logo and footer
     $("#logo").css({ top: winHeight - 250, left: winWidth - 150 });
     $("#ff").css({ top: winHeight + 180, left: winWidth - 200 });
     $("footer").css("right", winWidth + 40);
@@ -56,19 +65,36 @@ $(document).ready(function () {
         char.hide();
     }
 
-    // Create 'attack' button and 'vs' sign
+    // Create button and message boxes
     var atkBtn = $("<button>").text("ATTACK").attr("id", "attack");
     atkBtn.css({ position: "absolute", top: winHeight + 470, left: winWidth - 200 });
     mainScreen.append(atkBtn);
     atkBtn.hide();
 
+    var message = $("<div>").text("CLICK HERE TO START THE GAME").attr("id", "message");
+    message.css({ position: "absolute", top: winHeight + 400, left: winWidth - 100 });
+    mainScreen.append(message);
+
+    var vs = $("<img>").attr({
+        alt: "VS",
+        id: "vsSign",
+        src: "./assets/images/vs.png"
+    });
+    vs.css({ position: "absolute", top: winHeight + 185, left: winWidth + 80 });
+    mainScreen.append(vs);
+    vs.hide();
+
     // Start game button
-    $("html").on("click", function () {
-        if (gameStatus === "ready") {
-            gameStatus = "select";
+    $("#message").on("click", function () {
+        if (gameStatus === 0) {
+            resetGame();
+            message.hide();
             $("#logo").animate({ top: 0, left: 160, width: 165, height: 200 }, aniSpeed);
             $("#ff").animate({ top: 80, left: 100, width: 350, height: 67 }, aniSpeed);
             $("footer").animate({ right: 50 }, aniSpeed);
+            message.css({ "font-size": 40, top: winHeight + 500, left: winWidth - 100 });
+            message.text("SELECT YOUR CHARACTER");
+            message.fadeIn(aniSpeed * 3);
             for (var i = 0; i < character.id.length; i++) {
                 $("#" + character.id[i]).delay(i * 300).fadeIn(aniSpeed);
             }
@@ -77,24 +103,26 @@ $(document).ready(function () {
 
     // Select characters
     $(".charPic").on("click", function () {
-        if (gameStatus === "select") {
-            var selection = $(this).attr("id");
-            selection = selection.substring(0, selection.length - 3)
+        var selection = $(this).attr("id");
+        selection = selection.substring(0, selection.length - 3)
+
+        if (gameStatus === 1) {
             if (mainChar === "") {
                 mainChar = selection;
                 selectedMainChar(selection);
             } else if (mainChar != selection && enemyList[0] === "") {
                 enemyList[0] = selection;
                 firstEnemy(selection);
-            } else if (mainChar != selection && enemyList[0] != selection) {
-                enemyList[1] = selection;
-                secondEnemy(selection);
             }
-        }
+        } else if (gameStatus === 3 && mainChar != selection && enemyList[0] != selection) {
+            enemyList[1] = selection;
+            secondEnemy(selection);
+        };
     });
 
     // Selected main character
     function selectedMainChar(m) {
+        message.hide();
         var x = 0;
         for (var i = 0; i < 4; i++) {
             if (m === character.id[i]) {
@@ -105,13 +133,16 @@ $(document).ready(function () {
                 $("#" + m).delay(0).animate({ left: (winWidth - 300) }, aniSpeed);
                 $("#" + m + "Name").text("Attacker");
             } else {
-                $("#" + character.id[i]).delay(0).animate({ width: 200, top: (winHeight + 75), left: (winWidth + x++ * 200 + 100) }, aniSpeed);
+                $("#" + character.id[i]).delay(0).animate({ width: 200, top: (winHeight + 30), left: (winWidth + x++ * 200 + 100) }, aniSpeed);
             }
         }
+        message.text("SELECT YOUR OPPONENT").css({ "font-size": 30, top: (winHeight + 380), left: (winWidth + 230) });
+        message.fadeIn(aniSpeed);
     };
 
     // Selected 1st enemy
     function firstEnemy(e1) {
+        message.fadeOut();
         var y = 0;
         for (var i = 0; i < 4; i++) {
             if (e1 === character.id[i]) {
@@ -124,12 +155,12 @@ $(document).ready(function () {
                 $("#" + character.id[i]).delay(0).animate({ width: 150, top: (winHeight + y++ * 225), left: (winWidth + 550) }, aniSpeed);
             }
         }
-
         fighting();
     };
 
     // Selected 2nd enemy
     function secondEnemy(e2) {
+        message.fadeOut();
         var e1 = enemyList[0];
 
         defender = $.inArray(e2, character.id);
@@ -149,8 +180,7 @@ $(document).ready(function () {
         $("#" + e3).delay(0).animate({ width: 150, top: (winHeight), left: (winWidth + 550) }, aniSpeed);
         $("#" + e1).delay(0).animate({ width: 150, top: (winHeight + 225), left: (winWidth + 550) }, aniSpeed);
 
-        defeated(e1); // test
-        thirdEnemy(); // test
+        fighting();
     };
 
     // 3rd enemy
@@ -158,6 +188,7 @@ $(document).ready(function () {
         var e2 = enemyList[1];
         var e3 = enemyList[2];
 
+        defender = $.inArray(e3, character.id);
         $("#" + e3 + "Tag").css("height", "50px");
         $("#" + e3 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
         $("#" + e3).delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
@@ -171,20 +202,74 @@ $(document).ready(function () {
 
     // Defeated
     function defeated(d) {
+        atkBtn.fadeOut();
+        vs.fadeOut();
         $("#" + d + "Pic").css({
             "-webkit-filter": "grayscale(100%) brightness(40%) blur(2px)",
             filter: "grayscale(100%) brightness(40%) blur(2px)"
         });
-        $("#" + d + "Tag").css({ width: 100, height: 30, top: 120, left: 30, "background-color": "rgba(150, 0, 0, 0.3)" });
+        $("#" + d + "Tag").css({ height: "100%", "background-color": "rgba(150, 0, 0, 0.15)" });
         $("#" + d + "Name").text("Defeated");
-    }
+        if (gameStatus === 6) {
+            gameOver(false);
+        } else if (gameStatus === 7) {
+            gameOver(true);
+        }
+    };
 
     // Fighting mode
     function fighting() {
-        gameStatus = "fight";
-        atkBtn.fadeIn(800);
+        gameStatus++;
+        atkBtn.fadeIn(aniSpeed);
+        vs.fadeIn(aniSpeed * 2);
+    };
 
+    // Attack button pressed
+    atkBtn.on("click", function () {
+        //if
+        defeated(character.id[defender]);
+        gameStatus++;
+        if (gameStatus === 3) {
+            message.text("SELECT YOUR NEXT OPPONENT");
+            message.css({ "font-size": 24, top: (winHeight + 480), left: (winWidth + 310) });
+            message.fadeIn(aniSpeed);
+        } else if (gameStatus === 5) {
+            thirdEnemy();
+        };
+    });
 
-    }
+    // Game Over
+    function gameOver(userWin) {
+        message.text("CLICK HERE TO START THE GAME");
+        message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 100) });
+        message.fadeIn(aniSpeed);
+        gameStatus = -1;
+    };
 
-})
+    // Restart the game
+    function resetGame() {
+        mainChar = "";
+        enemyList = ["", "", ""];
+//        attacker = 0;
+//        defender = 0;
+        winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
+        winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
+        gameStatus = 1;
+        for (var i = 0; i < character.id.length; i++) {
+            var c = character.id[i];
+            $("#" + c).css({
+                top: winHeight,
+                left: (winWidth + i * 300 - 450)
+            });
+            $("#" + c + "Pic").css({
+                "-webkit-filter": "grayscale(100%) brightness(100%) blur(0px)",
+                filter: "grayscale(100%) brightness(100%) blur(0px)"
+            });
+            $("#" + c + "Tag").css({ height: "50px", "background-color": character.clr[i] });
+            $("#" + c + "Name").text(c);
+
+            $("#" + c).hide();
+
+        }
+    };
+});

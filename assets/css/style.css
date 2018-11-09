@@ -1,128 +1,146 @@
 html { 
-    background: url(../images/background2.jpg) no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    background-size: cover;
-  }
-
-body {
-    font-family: 'Roboto', sans-serif;
-    text-align: center;
-    padding: 0;
-    margin: 0;
- }
-
- footer {
-     position: absolute;
-     bottom: 40px;
- }
-
- #logo {
-    position: absolute;
-    display: inline-block;  
-  }
-
-#ff {
-    margin: auto;
-    position: absolute;
-    display: inline-block;
+  background: url(../images/background2.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  background-size: cover;
 }
 
- /* Display characters */
+body {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
 
- .character {
-    position: absolute;
-    width: 300px;
-    display: inline-block;  
-  }
+footer {
+   position: absolute;
+   bottom: 40px;
+}
+
+#logo {
+  position: absolute;
+  display: inline-block;  
+}
+
+#ff {
+  margin: auto;
+  position: absolute;
+  display: inline-block;
+}
+
+/* Display characters */
+
+.character {
+  position: absolute;
+  width: 300px;
+  display: inline-block;  
+}
 
 .charPic {
-    width: 100%;
-    height: auto;
-    display: block;
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);  
-    -webkit-transition: 1s ease;
-    transition: 1s ease;
+  width: 100%;
+  height: auto;
+  display: block;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);  
+  -webkit-transition: 1s ease;
+  transition: 1s ease;
 }
 
 .charPic:hover {
-    -webkit-filter: grayscale(0);
-    filter: grayscale(0);
+  -webkit-filter: grayscale(0);
+  filter: grayscale(0);
 }
-  
+
 .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 0;
-    transition: .5s ease;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  transition: .5s ease;
 }
-  
+
 .character:hover .overlay {
-    height: 50px;
-    }
+  height: 50px;
+  }
 
 .charName {
-    color: white;
-    font-size: 20px;
-    font-weight: 700;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 
-  #attack {
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 50%;
-    -webkit-animation-name: hvr-pulse-grow;
-    animation-name: hvr-pulse-grow;
-    -webkit-animation-duration: 0.35s;
-    animation-duration: 0.35s;
-    -webkit-animation-timing-function: linear;
-    animation-timing-function: linear;
-    -webkit-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
-  }
+#message {
+color: black;
+font-size: 30px;
+font-weight: 700;
+display: inline-block;
+cursor: pointer;
+-webkit-animation-name: hvr-pulse-grow;
+animation-name: hvr-pulse-grow;
+-webkit-animation-duration: 0.5s;
+animation-duration: 0.5s;
+-webkit-animation-timing-function: linear;
+animation-timing-function: linear;
+-webkit-animation-iteration-count: infinite;
+animation-iteration-count: infinite;
+-webkit-animation-direction: alternate;
+animation-direction: alternate;
+}
 
-  #attack:hover {
-    -webkit-animation-name: none;
-    animation-name: none;
-  }
+#attack {
+color: white;
+font-size: 15px;
+font-weight: 700;
+width: 100px;
+height: 100px;
+display: inline-block;
+vertical-align: middle;
+border-radius: 50%;
+cursor: pointer;
+-webkit-animation-name: hvr-pulse-grow;
+animation-name: hvr-pulse-grow;
+-webkit-animation-duration: 0.35s;
+animation-duration: 0.35s;
+-webkit-animation-timing-function: linear;
+animation-timing-function: linear;
+-webkit-animation-iteration-count: infinite;
+animation-iteration-count: infinite;
+-webkit-animation-direction: alternate;
+animation-direction: alternate;
+}
+
+#attack:hover {
+-webkit-animation-name: none;
+animation-name: none;
+}
 
 #attack:active {
-    -webkit-transform: translateY(4px);
-  transform: translateY(4px);
+-webkit-transform: translateY(4px);
+transform: translateY(4px);
 }
 
-  #attack:focus {
-        outline: none;
-  }
-  
-  @-webkit-keyframes hvr-pulse-grow {
-    to {
-      -webkit-transform: scale(1.15);
-      transform: scale(1.15);
-    }
-  }
-  @keyframes hvr-pulse-grow {
-    to {
-      -webkit-transform: scale(1.15);
-      transform: scale(1.15);
-    }
-  }
+#attack:focus {
+outline: none;
+}
+
+@-webkit-keyframes hvr-pulse-grow {
+to {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+}
+@keyframes hvr-pulse-grow {
+to {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+}
