@@ -9,11 +9,13 @@ $(document).ready(function () {
         clr: ["rgba(63, 168, 230, 0.7)", "rgba(17, 153, 46, 0.6)", "rgba(199, 60, 136, 0.7)", "rgba(56, 56, 56, 0.7)"]
     }
 
+    // Create variables for attacker and defenders
     var mainChar = "";
     var enemyList = ["", "", ""];
     var attacker = 0;
     var defender = 0;
 
+    // Set game config
     var winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
     var winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
     var aniSpeed = 600;
@@ -38,7 +40,6 @@ $(document).ready(function () {
 
     // Create characters
     var mainScreen = $(".container");
-
     for (var i = 0; i < character.id.length; i++) {
         // Put the element at the center of screen
         var char = $("<div class='character'>").attr("id", character.id[i]).css({
@@ -47,6 +48,7 @@ $(document).ready(function () {
             cursor: "pointer"
         });
 
+        // Put pictures and store the characters' stats
         var pic = $("<img>").attr({
             alt: character.id[i],
             id: character.id[i] + "Pic",
@@ -57,6 +59,7 @@ $(document).ready(function () {
             ct: character.ct[i],
         });
 
+        // Create the chracters' name tags
         var nameBox = $("<div class='overlay'>").attr("id", character.id[i] + "Tag").css("background-color", character.clr[i]);
         var nameText = $("<div class='charName'>").text(character.id[i]).attr("id", character.id[i] + "Name");
 
@@ -67,20 +70,23 @@ $(document).ready(function () {
         char.hide();
     }
 
-    // Create button and message boxes
+    // Create and hide 'Attack button'
     var atkBtn = $("<button>").text("ATTACK").attr("id", "attack");
     atkBtn.css({ position: "absolute", top: winHeight + 470, left: winWidth - 200 });
     mainScreen.append(atkBtn);
     atkBtn.hide();
 
+    // Create and hide the 1st message box
     var notice = $("<div>").attr("id", "notice");
     mainScreen.append(notice);
     notice.hide();
 
+    // Create and hide the 2nd message box
     var message = $("<div>").text("CLICK HERE TO START THE GAME").attr("id", "message");
     message.css({ position: "absolute", top: winHeight + 400, left: winWidth - 100 });
     mainScreen.append(message);
 
+    // Create and hide 'VS' sign
     var vs = $("<img>").attr({
         alt: "VS",
         id: "vsSign",
@@ -133,14 +139,15 @@ $(document).ready(function () {
         var x = 0;
         for (var i = 0; i < 4; i++) {
             if (m === character.id[i]) {
+                // Move the player's character to 'Attacker' position
                 attacker = i;
-                base_atk = character.atk[i];
                 $("#attack").css("background-color", character.clr[i]);
                 $("#" + m + "Tag").css("height", "50px");
                 $("#" + m + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
                 $("#" + m).css("cursor", "default").delay(0).animate({ left: (winWidth - 300) }, aniSpeed);
                 $("#" + m + "Name").text("Attacker");
             } else {
+                // Shrink and move other characters
                 $("#" + character.id[i]).delay(0).animate({ width: 200, top: (winHeight + 30), left: (winWidth + x++ * 200 + 100) }, aniSpeed);
             }
         }
@@ -154,12 +161,14 @@ $(document).ready(function () {
         var y = 0;
         for (var i = 0; i < 4; i++) {
             if (e1 === character.id[i]) {
+                // Move the 1st opponent to 'Defender' position
                 defender = i;
                 $("#" + e1 + "Tag").css("height", "50px");
                 $("#" + e1 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
                 $("#" + e1).css("cursor", "default").delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
                 $("#" + e1 + "Name").text("Defender");
             } else if (mainChar != character.id[i]) {
+                // Move other opponents to back
                 $("#" + character.id[i]).delay(0).animate({ width: 150, top: (winHeight + y++ * 225), left: (winWidth + 550) }, aniSpeed);
             }
         }
@@ -171,13 +180,14 @@ $(document).ready(function () {
         message.fadeOut();
         var e1 = enemyList[0];
 
+        // Set the 2nd opponent's 'Defender' position
         defender = $.inArray(e2, character.id);
         $("#" + e2 + "Tag").css("height", "50px");
         $("#" + e2 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
         $("#" + e2).css("cursor", "default").delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
         $("#" + e2 + "Name").text("Defender");
 
-        // Find last enemy
+        // Find last opponent
         for (var i = 0; i < 4; i++) {
             var e3 = character.id[i];
             if (e3 != mainChar && e3 != enemyList[0] && e3 != e2) {
@@ -185,23 +195,27 @@ $(document).ready(function () {
                 i = 4;
             }
         }
+
+        // Move opponents
         $("#" + e3).css("cursor", "default").delay(0).animate({ width: 150, top: (winHeight), left: (winWidth + 550) }, aniSpeed);
         $("#" + e1).delay(0).animate({ width: 150, top: (winHeight + 225), left: (winWidth + 550) }, aniSpeed);
 
         fighting();
     };
 
-    // 3rd enemy
+    // Auto selecting 3rd enemy
     function thirdEnemy() {
         var e2 = enemyList[1];
         var e3 = enemyList[2];
 
+        // Move last opponent to 'Defender' position
         defender = $.inArray(e3, character.id);
         $("#" + e3 + "Tag").css("height", "50px");
         $("#" + e3 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
         $("#" + e3).delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
         $("#" + e3 + "Name").text("Defender");
 
+        // Remove a defeated opponent from 'Defender' position
         $("#" + e2).delay(0).animate({ width: 150, top: (winHeight), left: (winWidth + 550) }, aniSpeed);
         defeated(e2);
 
@@ -210,8 +224,11 @@ $(document).ready(function () {
 
     // Defeated
     function defeated(d) {
+        // Hide attack button and 'VS' sign
         atkBtn.fadeOut();
         vs.fadeOut();
+
+        // Show 'Defeated' message
         $("#" + d + "Pic").css({
             "-webkit-filter": "grayscale(100%) brightness(40%) blur(2px)",
             filter: "grayscale(100%) brightness(40%) blur(2px)"
@@ -220,9 +237,9 @@ $(document).ready(function () {
         $("#" + d + "Name").text("Defeated");
 
         if (gameStatus === 7) {
-            gameOver(true);
+            gameOver(true);  // Won
         } else if (gameStatus === 8) {
-            gameOver(false);
+            gameOver(false); // Lost
         }
     };
 
@@ -235,6 +252,7 @@ $(document).ready(function () {
 
     // Game Over
     function gameOver(userWin) {
+        // Hide and reset the character overlay box
         $(".overlay").css("height", "0");
         notice.css({
             "font-size": 100,
@@ -243,15 +261,12 @@ $(document).ready(function () {
             "text-shadow": "0 0 10px black",
             top: winHeight + 180
         });
-
+        // Show 'won' or 'lost' message
         if (userWin) {
-            notice.text("You won!");
-            notice.css("left", winWidth + 120);
+            notice.text("You won!").css("left", winWidth + 120);
         } else {
-            notice.text("You lost...");
-            notice.css("left", winWidth - 330);
+            notice.text("You lost...").css("left", winWidth - 330);
         }
-
         message.text("CLICK HERE TO PLAY AGAIN").css("cursor", "pointer");
         message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 50) });
         message.fadeIn(aniSpeed);
@@ -259,7 +274,7 @@ $(document).ready(function () {
         gameStatus = 0;
     };
 
-    // Restart the game
+    // Reset the game
     function resetGame() {
         mainChar = "";
         enemyList = ["", "", ""];
@@ -295,6 +310,7 @@ $(document).ready(function () {
             d_hp -= a_pow;
             a_pow += Number($("#" + a + "Pic").attr("atk"));
 
+            // Display opponent's HP bar
             $("#" + d + "Tag").css("width", (d_hp / Number($("#" + d + "Pic").attr("hp"))*100) +"%" );
             $("#" + d + "Name").text("HP " + d_hp);
 
@@ -309,19 +325,23 @@ $(document).ready(function () {
                 defeated(a);        // 7 - User win
             }                       // 8 - User lose
 
+            // Display players's HP bar
             $("#" + a + "Tag").css("width", (a_hp / Number($("#" + a + "Pic").attr("hp"))*100) +"%" );
             $("#" + a + "Name").text("HP " + a_hp);
 
+            // Store the charaters' stats to global variables
             character.hp[attacker] = a_hp;
             character.atk[attacker] = a_pow;
             character.hp[defender] = d_hp;
             character.ct[defender] = d_pow;
 
             if (gameStatus === 3) {
+                // To select 2nd opponent
                 message.text("SELECT YOUR NEXT OPPONENT");
                 message.css({ "font-size": 24, top: (winHeight + 480), left: (winWidth + 310) });
                 message.fadeIn(aniSpeed);
             } else if (gameStatus === 5) {
+                // Auto selecting last opponent
                 thirdEnemy();
             };
 
