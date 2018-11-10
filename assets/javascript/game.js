@@ -214,6 +214,7 @@ $(document).ready(function () {
         });
         $("#" + d + "Tag").css({ height: "100%", "background-color": "rgba(150, 0, 0, 0.15)" });
         $("#" + d + "Name").text("Defeated");
+        
         if (gameStatus === 6) {
             gameOver(false);
         } else if (gameStatus === 7) {
@@ -230,8 +231,11 @@ $(document).ready(function () {
 
     // Attack button pressed
     atkBtn.on("click", function () {
-        //if
-        defeated(character.id[defender]);
+        if (gameStatus < 5) {
+            defeated(character.id[defender]);
+        } else {
+            defeated(character.id[attacker]);
+        }
         gameStatus++;
         if (gameStatus === 3) {
             message.text("SELECT YOUR NEXT OPPONENT");
@@ -244,14 +248,27 @@ $(document).ready(function () {
 
     // Game Over
     function gameOver(userWin) {
-        notice.text(" You won! ");
-        notice.css({ "font-size": 55, "color": "red", "background-color": "black", top: (winHeight + 200), left: (winWidth + 10) });
-        notice.fadeIn(aniSpeed * 2);
+        $(".overlay").css( "height", "0" );
+        notice.css({
+            "font-size": 100,
+            "font-family": "'Audiowide', cursive",
+            "color": "#ee0000",
+            "text-shadow": "0 0 10px black",
+            top: winHeight + 180
+        });
+
+        if (userWin) {
+            notice.text("You won!");
+            notice.css("left", winWidth + 120);
+        } else {
+            notice.text("You lost...");
+            notice.css("left", winWidth - 320);
+        }
 
         message.text("CLICK HERE TO PLAY AGAIN");
-        message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 100) });
+        message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 75) });
         message.fadeIn(aniSpeed);
-
+        notice.delay(aniSpeed).fadeIn(aniSpeed);
         gameStatus = -1;
     };
 
