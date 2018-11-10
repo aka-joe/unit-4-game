@@ -79,6 +79,18 @@ footer {
   text-align: center;
 }
 
+#damage {
+  color: black;
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+  width: 250px;
+  padding: 0;
+  top: 0;
+  left: 0;
+  position: absolute;
+  display: inline-block;
+}
 #notice {
   color: black;
   font-size: 30px;

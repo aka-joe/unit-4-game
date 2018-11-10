@@ -76,6 +76,13 @@ $(document).ready(function () {
     mainScreen.append(atkBtn);
     atkBtn.hide();
 
+    // Create and hide damage dealt status
+    var damage = $("<div>").attr("id", "damage");
+    damage.text("Testing");
+    damage.css({ top: winHeight + 320, left: winWidth + 5 });
+    mainScreen.append(damage);
+    damage.hide();
+
     // Create and hide the 1st message box
     var notice = $("<div>").attr("id", "notice");
     mainScreen.append(notice);
@@ -270,7 +277,7 @@ $(document).ready(function () {
         message.text("CLICK HERE TO PLAY AGAIN").css("cursor", "pointer");
         message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 50) });
         message.fadeIn(aniSpeed);
-        notice.delay(aniSpeed).fadeIn(aniSpeed);
+        notice.delay(aniSpeed).fadeIn(aniSpeed * 2);
         gameStatus = 0;
     };
 
@@ -299,35 +306,41 @@ $(document).ready(function () {
 
     // Attack button pressed
     atkBtn.on("click", function () {
-        if (!clicked){
+        if (!clicked) {
             var a = character.id[attacker];
             var a_hp = character.hp[attacker];
             var a_pow = character.atk[attacker];
             var d = character.id[defender];
             var d_hp = character.hp[defender];
             var d_pow = character.ct[defender];
+            var dmg = "";
 
+            dmg = "You dealt<br>" + a_pow + " damage<br><br>"
             d_hp -= a_pow;
             a_pow += Number($("#" + a + "Pic").attr("atk"));
 
             // Display opponent's HP bar
-            $("#" + d + "Tag").css("width", (d_hp / Number($("#" + d + "Pic").attr("hp"))*100) +"%" );
+            $("#" + d + "Tag").css("width", (d_hp / Number($("#" + d + "Pic").attr("hp")) * 100) + "%");
+            $("#" + d + "Name").text("HP " + d_hp);
             $("#" + d + "Name").text("HP " + d_hp);
 
-            if (d_hp > 0) {         // Game status
-                a_hp -= d_pow;      // 0 - Waiting to start the game
-            } else {                // 1 - Selecting main character and 1st opponent
-                gameStatus++;       // 2 - 1st fighting
-                defeated(d);        // 3 - Selecting 2nd opponent
-            }                       // 4 - 2nd fighting
-            if (a_hp <= 0) {        // 5 - Auto selecting last opponent
-                gameStatus = 8;     // 6 - Last fighting
-                defeated(a);        // 7 - User win
-            }                       // 8 - User lose
+            if (d_hp > 0) {
+                dmg += d + " dealt<br>" + d_pow + " damage<br>"
+                a_hp -= d_pow;
+            } else {
+                dmg += "You defeated<br>" + d + "!";
+                gameStatus++;
+                defeated(d);
+            }
+            if (a_hp <= 0) {
+                gameStatus = 8;
+                defeated(a);
+            }
 
-            // Display players's HP bar
-            $("#" + a + "Tag").css("width", (a_hp / Number($("#" + a + "Pic").attr("hp"))*100) +"%" );
+            // Display players's HP bar and dealt damages
+            $("#" + a + "Tag").css("width", (a_hp / Number($("#" + a + "Pic").attr("hp")) * 100) + "%");
             $("#" + a + "Name").text("HP " + a_hp);
+            damage.html(dmg).show().delay(aniSpeed * 2).fadeOut(aniSpeed);
 
             // Store the charaters' stats to global variables
             character.hp[attacker] = a_hp;
@@ -347,7 +360,7 @@ $(document).ready(function () {
 
             // Prevent fast-clicking-bug
             clicked = true;
-            setTimeout(function(){ clicked = false; }, 500); 
+            setTimeout(function () { clicked = false; }, 500);
         };
     });
 });
