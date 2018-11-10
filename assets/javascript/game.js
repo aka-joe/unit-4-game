@@ -1,5 +1,26 @@
 $(document).ready(function () {
 
+    // Initialize music and sounds
+    var openingMusic = document.createElement('audio');
+    var selectSound = document.createElement('audio');
+    var acceptSound = document.createElement('audio');
+    var completSound = document.createElement('audio');
+    var wonMusic = document.createElement('audio');
+    var lostMusic = document.createElement('audio');
+
+    openingMusic.setAttribute('src', './assets/sounds/FFI-OpeningTheme.mp3');
+    selectSound.setAttribute('src', './assets/sounds/select.mp3');
+    acceptSound.setAttribute('src', './assets/sounds/accept.mp3');
+    completSound.setAttribute('src', './assets/sounds/complete.mp3');
+    wonMusic.setAttribute('src', './assets/sounds/FFXIV-VictoryFanfare.mp3');
+    lostMusic.setAttribute('src', './assets/sounds/FFX-GameOver.mp3');
+    
+    // Loop BGM
+    openingMusic.addEventListener('ended', function() {
+        this.play();
+    }, false);
+    openingMusic.play();
+
     // Initialize characters
     var character = {
         id: ["Cloud", "Squall", "Lightning", "Noctis"],
@@ -56,7 +77,7 @@ $(document).ready(function () {
             class: "charPic",
             hp: character.hp[i],
             atk: character.atk[i],
-            ct: character.ct[i],
+            ct: character.ct[i]
         });
 
         // Create the chracters' name tags
@@ -106,6 +127,8 @@ $(document).ready(function () {
     // Start game button
     $("#message").on("click", function () {
         if (gameStatus === 0) {
+            openingMusic.pause();
+            acceptSound.play();
             resetGame();
             notice.hide();
             message.hide();
@@ -140,6 +163,13 @@ $(document).ready(function () {
         };
     });
 
+    // Sound for selecting characters
+    $(".charPic").mouseover(function () {
+        if (($(this).attr("id") != mainChar+"Pic") && (gameStatus === 1 || gameStatus === 3 || gameStatus === 5)) {
+            selectSound.play();
+        };
+    });
+
     // Selected main character
     function selectedMainChar(m) {
         message.hide();
@@ -147,6 +177,7 @@ $(document).ready(function () {
         for (var i = 0; i < 4; i++) {
             if (m === character.id[i]) {
                 // Move the player's character to 'Attacker' position
+                completSound.play();
                 attacker = i;
                 $("#attack").css("background-color", character.clr[i]);
                 $("#" + m + "Tag").css("height", "50px");
@@ -169,6 +200,7 @@ $(document).ready(function () {
         for (var i = 0; i < 4; i++) {
             if (e1 === character.id[i]) {
                 // Move the 1st opponent to 'Defender' position
+                completSound.play();
                 defender = i;
                 $("#" + e1 + "Tag").css("height", "50px");
                 $("#" + e1 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
@@ -189,6 +221,7 @@ $(document).ready(function () {
 
         // Set the 2nd opponent's 'Defender' position
         defender = $.inArray(e2, character.id);
+        completSound.play();
         $("#" + e2 + "Tag").css("height", "50px");
         $("#" + e2 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
         $("#" + e2).css("cursor", "default").delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
