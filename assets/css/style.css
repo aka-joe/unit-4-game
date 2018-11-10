@@ -12,6 +12,7 @@ body {
 }
 
 footer {
+  font-family: 'Gloria Hallelujah', cursive;
    position: absolute;
    bottom: 40px;
 }
@@ -76,6 +77,16 @@ footer {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   text-align: center;
+}
+
+#notice {
+  color: black;
+  font-size: 30px;
+  font-weight: 700;
+  top: 0;
+  left: 0;
+  position: absolute;
+  display: inline-block;
 }
 
 #message {

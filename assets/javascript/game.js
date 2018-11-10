@@ -58,7 +58,6 @@ $(document).ready(function () {
         var nameText = $("<div class='charName'>").text(character.id[i]).attr("id", character.id[i] + "Name");
 
         nameBox.append(nameText);
-
         char.append(pic);
         char.append(nameBox);
         mainScreen.append(char);
@@ -70,6 +69,10 @@ $(document).ready(function () {
     atkBtn.css({ position: "absolute", top: winHeight + 470, left: winWidth - 200 });
     mainScreen.append(atkBtn);
     atkBtn.hide();
+
+    var notice = $("<div>").attr("id", "notice");
+    mainScreen.append(notice);
+    notice.hide();
 
     var message = $("<div>").text("CLICK HERE TO START THE GAME").attr("id", "message");
     message.css({ position: "absolute", top: winHeight + 400, left: winWidth - 100 });
@@ -88,6 +91,7 @@ $(document).ready(function () {
     $("#message").on("click", function () {
         if (gameStatus === 0) {
             resetGame();
+            notice.hide();
             message.hide();
             $("#logo").animate({ top: 0, left: 160, width: 165, height: 200 }, aniSpeed);
             $("#ff").animate({ top: 80, left: 100, width: 350, height: 67 }, aniSpeed);
@@ -240,9 +244,14 @@ $(document).ready(function () {
 
     // Game Over
     function gameOver(userWin) {
-        message.text("CLICK HERE TO START THE GAME");
+        notice.text(" You won! ");
+        notice.css({ "font-size": 55, "color": "red", "background-color": "black", top: (winHeight + 200), left: (winWidth + 10) });
+        notice.fadeIn(aniSpeed * 2);
+
+        message.text("CLICK HERE TO PLAY AGAIN");
         message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 100) });
         message.fadeIn(aniSpeed);
+
         gameStatus = -1;
     };
 
@@ -250,27 +259,18 @@ $(document).ready(function () {
     function resetGame() {
         mainChar = "";
         enemyList = ["", "", ""];
-//        attacker = 0;
-//        defender = 0;
         winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
         winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
+        atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
+        vs.css({ top: winHeight + 185, left: winWidth + 80 });
         gameStatus = 1;
         for (var i = 0; i < character.id.length; i++) {
             var c = character.id[i];
-            $("#" + c).css({
-                top: winHeight,
-                left: (winWidth + i * 300 - 450)
-            });
-            $("#" + c + "Pic").css({
-                "-webkit-filter": "",
-                filter: ""
-            });
-            $("#" + c).css("width", "");
+            $("#" + c).css({ width: "", top: winHeight, left: (winWidth + i * 300 - 450) });
             $("#" + c + "Tag").css({ height: "", "background-color": character.clr[i] });
+            $("#" + c + "Pic").css({ "-webkit-filter": "", filter: "" });
             $("#" + c + "Name").text(c);
-
             $("#" + c).hide();
-
         }
     };
 });
