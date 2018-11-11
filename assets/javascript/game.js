@@ -5,6 +5,8 @@ $(document).ready(function () {
     var selectSound = document.createElement('audio');
     var acceptSound = document.createElement('audio');
     var completSound = document.createElement('audio');
+    var hitSound = document.createElement('audio');
+    var battleMusic = document.createElement('audio');
     var wonMusic = document.createElement('audio');
     var lostMusic = document.createElement('audio');
 
@@ -12,6 +14,8 @@ $(document).ready(function () {
     selectSound.setAttribute('src', './assets/sounds/select.mp3');
     acceptSound.setAttribute('src', './assets/sounds/accept.mp3');
     completSound.setAttribute('src', './assets/sounds/complete.mp3');
+    hitSound.setAttribute('src', './assets/sounds/hit.mp3');
+    battleMusic.setAttribute('src', './assets/sounds/FFVIII-BattleTheme.mp3')
     wonMusic.setAttribute('src', './assets/sounds/FFXIV-VictoryFanfare.mp3');
     lostMusic.setAttribute('src', './assets/sounds/FFX-GameOver.mp3');
     
@@ -20,6 +24,9 @@ $(document).ready(function () {
         this.play();
     }, false);
     openingMusic.play();
+    battleMusic.addEventListener('ended', function() {
+        this.play();
+    }, false);
 
     // Initialize characters
     var character = {
@@ -127,7 +134,6 @@ $(document).ready(function () {
     // Start game button
     $("#message").on("click", function () {
         if (gameStatus === 0) {
-            openingMusic.pause();
             acceptSound.play();
             resetGame();
             notice.hide();
@@ -166,6 +172,7 @@ $(document).ready(function () {
     // Sound for selecting characters
     $(".charPic").mouseover(function () {
         if (($(this).attr("id") != mainChar+"Pic") && (gameStatus === 1 || gameStatus === 3 || gameStatus === 5)) {
+            selectSound.currentTime = 0;
             selectSound.play();
         };
     });
@@ -177,6 +184,7 @@ $(document).ready(function () {
         for (var i = 0; i < 4; i++) {
             if (m === character.id[i]) {
                 // Move the player's character to 'Attacker' position
+                completSound.currentTime = 0;
                 completSound.play();
                 attacker = i;
                 $("#attack").css("background-color", character.clr[i]);
@@ -200,7 +208,11 @@ $(document).ready(function () {
         for (var i = 0; i < 4; i++) {
             if (e1 === character.id[i]) {
                 // Move the 1st opponent to 'Defender' position
+                openingMusic.pause();
+                completSound.currentTime = 0;
                 completSound.play();
+                battleMusic.currentTime = 0;
+                battleMusic.play();
                 defender = i;
                 $("#" + e1 + "Tag").css("height", "50px");
                 $("#" + e1 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
@@ -221,6 +233,7 @@ $(document).ready(function () {
 
         // Set the 2nd opponent's 'Defender' position
         defender = $.inArray(e2, character.id);
+        completSound.currentTime = 0;
         completSound.play();
         $("#" + e2 + "Tag").css("height", "50px");
         $("#" + e2 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
@@ -304,18 +317,28 @@ $(document).ready(function () {
         // Show 'won' or 'lost' message
         if (userWin) {
             notice.text("You won!").css("left", winWidth + 120);
+            wonMusic.currentTime = 0;
+            wonMusic.play();
         } else {
             notice.text("You lost...").css("left", winWidth - 330);
+            lostMusic.currentTime = 0;
+            lostMusic.play();
+
         }
         message.text("CLICK HERE TO PLAY AGAIN").css("cursor", "pointer");
         message.css({ "font-size": 30, top: (winHeight + 500), left: (winWidth - 50) });
         message.fadeIn(aniSpeed);
         notice.delay(aniSpeed).fadeIn(aniSpeed * 2);
+        battleMusic.pause();
+        openingMusic.currentTime = 0;
         gameStatus = 0;
     };
 
     // Reset the game
     function resetGame() {
+        wonMusic.pause();
+        lostMusic.pause();
+        openingMusic.play();
         mainChar = "";
         enemyList = ["", "", ""];
         winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
@@ -340,6 +363,9 @@ $(document).ready(function () {
     // Attack button pressed
     atkBtn.on("click", function () {
         if (!clicked) {
+            hitSound.currentTime = 0;
+            hitSound.play();
+
             var a = character.id[attacker];
             var a_hp = character.hp[attacker];
             var a_pow = character.atk[attacker];
@@ -357,6 +383,7 @@ $(document).ready(function () {
             $("#" + d + "Name").text("HP " + d_hp);
             $("#" + d + "Name").text("HP " + d_hp);
 
+            // Check player and opponent characters' status
             if (d_hp > 0) {
                 dmg += d + " dealt<br>" + d_pow + " damage<br>"
                 a_hp -= d_pow;
