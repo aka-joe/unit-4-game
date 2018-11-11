@@ -18,13 +18,13 @@ $(document).ready(function () {
     battleMusic.setAttribute('src', './assets/sounds/FFVIII-BattleTheme.mp3')
     wonMusic.setAttribute('src', './assets/sounds/FFXIV-VictoryFanfare.mp3');
     lostMusic.setAttribute('src', './assets/sounds/FFX-GameOver.mp3');
-    
+
     // Loop BGM
-    openingMusic.addEventListener('ended', function() {
+    openingMusic.addEventListener('ended', function () {
         this.play();
     }, false);
     openingMusic.play();
-    battleMusic.addEventListener('ended', function() {
+    battleMusic.addEventListener('ended', function () {
         this.play();
     }, false);
 
@@ -68,9 +68,9 @@ $(document).ready(function () {
 
     // Create characters
     var mainScreen = $(".container");
-    for (var i = 0; i < character.id.length; i++) {
+    character.id.forEach(function (c, i) {
         // Put the element at the center of screen
-        var char = $("<div class='character'>").attr("id", character.id[i]).css({
+        var char = $("<div class='character'>").attr("id", c).css({
             top: winHeight,
             left: (winWidth + i * 300 - 450),
             cursor: "pointer"
@@ -78,9 +78,9 @@ $(document).ready(function () {
 
         // Put pictures and store the characters' stats
         var pic = $("<img>").attr({
-            alt: character.id[i],
-            id: character.id[i] + "Pic",
-            src: "./assets/images/" + character.id[i] + ".png",
+            alt: c,
+            id: c + "Pic",
+            src: "./assets/images/" + c + ".png",
             class: "charPic",
             hp: character.hp[i],
             atk: character.atk[i],
@@ -88,15 +88,15 @@ $(document).ready(function () {
         });
 
         // Create the chracters' name tags
-        var nameBox = $("<div class='overlay'>").attr("id", character.id[i] + "Tag").css("background-color", character.clr[i]);
-        var nameText = $("<div class='charName'>").text(character.id[i]).attr("id", character.id[i] + "Name");
+        var nameBox = $("<div class='overlay'>").attr("id", c + "Tag").css("background-color", c);
+        var nameText = $("<div class='charName'>").text(c).attr("id", c + "Name");
 
         nameBox.append(nameText);
         char.append(pic);
         char.append(nameBox);
         mainScreen.append(char);
         char.hide();
-    }
+    });
 
     // Create and hide 'Attack button'
     var atkBtn = $("<button>").text("ATTACK").attr("id", "attack");
@@ -144,10 +144,10 @@ $(document).ready(function () {
             message.css({ "font-size": 40, top: winHeight + 500, left: winWidth - 100 });
             message.text("SELECT YOUR CHARACTER").css("cursor", "default");
             message.fadeIn(aniSpeed * 3);
-            for (var i = 0; i < character.id.length; i++) {
-                $("#" + character.id[i]).delay(i * 300).fadeIn(aniSpeed);
-            }
-        }
+            character.id.forEach(function (c, i) {
+                $("#" + c).delay(i * 300).fadeIn(aniSpeed);
+            });
+        };
     });
 
     // Select characters
@@ -171,7 +171,7 @@ $(document).ready(function () {
 
     // Sound for selecting characters
     $(".charPic").mouseover(function () {
-        if (($(this).attr("id") != mainChar+"Pic") && (gameStatus === 1 || gameStatus === 3 || gameStatus === 5)) {
+        if (($(this).attr("id") != mainChar + "Pic") && (gameStatus === 1 || gameStatus === 3 || gameStatus === 5)) {
             selectSound.currentTime = 0;
             selectSound.play();
         };
@@ -181,8 +181,8 @@ $(document).ready(function () {
     function selectedMainChar(m) {
         message.hide();
         var x = 0;
-        for (var i = 0; i < 4; i++) {
-            if (m === character.id[i]) {
+        character.id.forEach(function (c,i) {
+            if (m === c) {
                 // Move the player's character to 'Attacker' position
                 completSound.currentTime = 0;
                 completSound.play();
@@ -194,9 +194,9 @@ $(document).ready(function () {
                 $("#" + m + "Name").text("Attacker");
             } else {
                 // Shrink and move other characters
-                $("#" + character.id[i]).delay(0).animate({ width: 200, top: (winHeight + 30), left: (winWidth + x++ * 200 + 100) }, aniSpeed);
+                $("#" + c).delay(0).animate({ width: 200, top: (winHeight + 30), left: (winWidth + x++ * 200 + 100) }, aniSpeed);
             }
-        }
+        });
         message.text("SELECT YOUR OPPONENT").css({ "font-size": 30, top: (winHeight + 380), left: (winWidth + 230) });
         message.fadeIn(aniSpeed);
     };
@@ -205,8 +205,8 @@ $(document).ready(function () {
     function firstEnemy(e1) {
         message.fadeOut();
         var y = 0;
-        for (var i = 0; i < 4; i++) {
-            if (e1 === character.id[i]) {
+        character.id.forEach(function (c,i) {
+            if (e1 === c) {
                 // Move the 1st opponent to 'Defender' position
                 openingMusic.pause();
                 completSound.currentTime = 0;
@@ -218,11 +218,11 @@ $(document).ready(function () {
                 $("#" + e1 + "Pic").css({ "-webkit-filter": "grayscale(0)", filter: "grayscale(0)" });
                 $("#" + e1).css("cursor", "default").delay(0).animate({ width: 300, top: winHeight, left: (winWidth + 250) }, aniSpeed);
                 $("#" + e1 + "Name").text("Defender");
-            } else if (mainChar != character.id[i]) {
+            } else if (mainChar != c) {
                 // Move other opponents to back
-                $("#" + character.id[i]).delay(0).animate({ width: 150, top: (winHeight + y++ * 225), left: (winWidth + 550) }, aniSpeed);
-            }
-        }
+                $("#" + c).delay(0).animate({ width: 150, top: (winHeight + y++ * 225), left: (winWidth + 550) }, aniSpeed);
+            };
+        });
         fighting();
     };
 
@@ -241,11 +241,11 @@ $(document).ready(function () {
         $("#" + e2 + "Name").text("Defender");
 
         // Find last opponent
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < character.id.length; i++) {
             var e3 = character.id[i];
             if (e3 != mainChar && e3 != enemyList[0] && e3 != e2) {
                 enemyList[2] = e3;
-                i = 4;
+                i = 4; // Exit the loop
             }
         }
 
@@ -347,8 +347,7 @@ $(document).ready(function () {
         atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
         vs.css({ top: winHeight + 185, left: winWidth + 80 });
         gameStatus = 1;
-        for (var i = 0; i < character.id.length; i++) {
-            var c = character.id[i];
+        character.id.forEach(function (c,i) {
             character.hp[i] = Number($("#" + c + "Pic").attr("hp"));
             character.atk[i] = Number($("#" + c + "Pic").attr("atk"));
             character.ct[i] = Number($("#" + c + "Pic").attr("ct"));
@@ -357,7 +356,7 @@ $(document).ready(function () {
             $("#" + c + "Pic").css({ "-webkit-filter": "", filter: "" });
             $("#" + c + "Name").text(c);
             $("#" + c).hide();
-        }
+        });
     };
 
     // Attack button pressed
