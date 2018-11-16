@@ -106,7 +106,7 @@ $(document).ready(function () {
 
     // Create and hide damage dealt status
     var damage = $("<div>").attr("id", "damage");
-    damage.text("Testing");
+    damage.text(" ");
     damage.css({ top: winHeight + 320, left: winWidth + 5 });
     mainScreen.append(damage);
     damage.hide();
@@ -345,6 +345,7 @@ $(document).ready(function () {
         winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
         clicked = false;
         atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
+        damage.css({ top: winHeight + 320, left: winWidth + 5 });
         vs.css({ top: winHeight + 185, left: winWidth + 80 });
         gameStatus = 1;
         character.id.forEach(function (c,i) {
