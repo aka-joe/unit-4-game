@@ -48,6 +48,7 @@ $(document).ready(function () {
     var winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
     var aniSpeed = 600;
     var clicked = false;
+    var userWin = true;
 
     // Game status
     // 0 - Waiting to start the game
@@ -59,12 +60,7 @@ $(document).ready(function () {
     // 6 - Last fighting
     // 7 - User win
     // 8 - User lose
-    var gameStatus = 0;
-
-    // Display logo and footer
-    $("#logo").css({ top: winHeight - 250, left: winWidth - 150 });
-    $("#ff").css({ top: winHeight + 180, left: winWidth - 200 });
-    $("footer").css("right", winWidth + 40);
+    var gameStatus = -1;
 
     // Create characters
     var mainScreen = $(".container");
@@ -116,10 +112,19 @@ $(document).ready(function () {
     mainScreen.append(notice);
     notice.hide();
 
-    // Create and hide the 2nd message box
+    // Create the 2nd message box
     var message = $("<div>").text("CLICK HERE TO START THE GAME").attr("id", "message");
-    message.css({ position: "absolute", top: winHeight + 400, left: winWidth - 100 });
+    message.css("position", "absolute");
     mainScreen.append(message);
+
+    // Position logo, footer, and message
+    function openingScreen() {
+        $("#logo").css({ top: winHeight - 250, left: winWidth - 150 });
+        $("#ff").css({ top: winHeight + 180, left: winWidth - 200 });
+        $("footer").css("right", winWidth + 40);
+        message.css({ top: winHeight + 400, left: winWidth - 100 });
+    };
+    openingScreen();
 
     // Create and hide 'VS' sign
     var vs = $("<img>").attr({
@@ -133,7 +138,7 @@ $(document).ready(function () {
 
     // Start game button
     $("#message").on("click", function () {
-        if (gameStatus === 0) {
+        if (gameStatus <= 0) {
             acceptSound.play();
             resetGame();
             notice.hide();
@@ -141,7 +146,6 @@ $(document).ready(function () {
             $("#logo").animate({ top: 0, left: 160, width: 165, height: 200 }, aniSpeed);
             $("#ff").animate({ top: 80, left: 100, width: 350, height: 67 }, aniSpeed);
             $("footer").animate({ right: 50 }, aniSpeed);
-            message.css({ "font-size": 40, top: winHeight + 500, left: winWidth - 100 });
             message.text("SELECT YOUR CHARACTER").css("cursor", "default");
             message.fadeIn(aniSpeed * 3);
             character.id.forEach(function (c, i) {
@@ -181,7 +185,7 @@ $(document).ready(function () {
     function selectedMainChar(m) {
         message.hide();
         var x = 0;
-        character.id.forEach(function (c,i) {
+        character.id.forEach(function (c, i) {
             if (m === c) {
                 // Move the player's character to 'Attacker' position
                 completSound.currentTime = 0;
@@ -205,7 +209,7 @@ $(document).ready(function () {
     function firstEnemy(e1) {
         message.fadeOut();
         var y = 0;
-        character.id.forEach(function (c,i) {
+        character.id.forEach(function (c, i) {
             if (e1 === c) {
                 // Move the 1st opponent to 'Defender' position
                 openingMusic.pause();
@@ -247,7 +251,7 @@ $(document).ready(function () {
                 enemyList[2] = e3;
                 i = 4; // Exit the loop
             }
-        }
+        };
 
         // Move opponents
         $("#" + e3).css("cursor", "default").delay(0).animate({ width: 150, top: (winHeight), left: (winWidth + 550) }, aniSpeed);
@@ -310,8 +314,9 @@ $(document).ready(function () {
         notice.css({
             "font-size": 100,
             "font-family": "'Audiowide', cursive",
-            "color": "#ee0000",
+            color: "#ee0000",
             "text-shadow": "0 0 10px black",
+            position: "absolute",
             top: winHeight + 180
         });
         // Show 'won' or 'lost' message
@@ -334,6 +339,21 @@ $(document).ready(function () {
         gameStatus = 0;
     };
 
+    // Reset button position
+    function resetButtons() {
+        atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
+        damage.css({ top: winHeight + 320, left: winWidth + 5 });
+        vs.css({ top: winHeight + 185, left: winWidth + 80 });
+    };
+
+    // Reset characters position
+    function characterSelection() {
+        message.css({ top: winHeight + 500, left: winWidth - 100 });
+        character.id.forEach(function (c, i) {
+            $("#" + c).css({ top: winHeight, left: (winWidth + i * 300 - 450) });
+        });
+    };
+
     // Reset the game
     function resetGame() {
         wonMusic.pause();
@@ -341,18 +361,18 @@ $(document).ready(function () {
         openingMusic.play();
         mainChar = "";
         enemyList = ["", "", ""];
+        clicked = false;
         winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
         winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
-        clicked = false;
-        atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
-        damage.css({ top: winHeight + 320, left: winWidth + 5 });
-        vs.css({ top: winHeight + 185, left: winWidth + 80 });
+        resetButtons();
+        characterSelection();
+        message.css("font-size", 40);
         gameStatus = 1;
-        character.id.forEach(function (c,i) {
+        character.id.forEach(function (c, i) {
             character.hp[i] = Number($("#" + c + "Pic").attr("hp"));
             character.atk[i] = Number($("#" + c + "Pic").attr("atk"));
             character.ct[i] = Number($("#" + c + "Pic").attr("ct"));
-            $("#" + c).css({ "cursor": "pointer", width: "", top: winHeight, left: (winWidth + i * 300 - 450) });
+            $("#" + c).css({ cursor: "pointer", width: "" });
             $("#" + c + "Tag").css({ width: "", height: "", "background-color": character.clr[i] });
             $("#" + c + "Pic").css({ "-webkit-filter": "", filter: "" });
             $("#" + c + "Name").text(c);
@@ -423,4 +443,79 @@ $(document).ready(function () {
             setTimeout(function () { clicked = false; }, 500);
         };
     });
+
+    // Re-position after resizing window
+    $(window).resize(function () {
+        winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
+        winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
+
+        if (gameStatus === -1) {
+            openingScreen();
+        } else if (gameStatus === 1) {
+            if (mainChar === "") {
+                characterSelection();
+            } else {
+                listEnemys();
+            }
+        } else {
+            var e = ["", ""];
+            var x = 480;
+            var y = 310;
+            if (gameStatus === 2 || gameStatus === 3) {
+                var z = 0;
+                character.id.forEach(function (c, i) {
+                    if (i != attacker && i != defender) {
+                        e[z++] = character.id[i];
+                    };
+                });
+            } else if (gameStatus === 4 || gameStatus === 5) {
+                e[1] = enemyList[0];
+                character.id.forEach(function (c, i) {
+                    if (i != attacker && i != defender && character.id[i] != e[1]) {
+                        e[0] = character.id[i];
+                    };
+                });
+            } else {
+                e[0] = enemyList[1];
+                e[1] = enemyList[0];
+            }
+            if (gameStatus === 0) {
+                x = 500;
+                y = -50;
+                if (character.hp[attacker] > 0) {
+                    z = 120;
+                } else {
+                    z = -330;
+                    if (character.id[defender] === enemyList[1]) {
+                    e[0] = enemyList[2];
+                    e[1] = enemyList[0];
+                    };
+                };
+                notice.css({ top: winHeight + 180, left: (winWidth + z) });
+            }
+            fightingScr(e, x, y);
+        };
+    });
+
+    // Re-position on opponets selection screen
+    function listEnemys() {
+        message.css({ top: (winHeight + 380), left: (winWidth + 230) });
+        $("#" + mainChar).css({ top: winHeight, left: (winWidth - 300) });
+        var x = 0;
+        character.id.forEach(function (c, i) {
+            if (i != attacker) {
+                $("#" + c).css({ top: (winHeight + 30), left: (winWidth + x++ * 200 + 100) });
+            }
+        });
+    };
+
+    // Re-posion on fighting screen
+    function fightingScr(e, x, y) {
+        resetButtons();
+        $("#" + character.id[attacker]).css({ top: winHeight, left: (winWidth - 300) });
+        $("#" + character.id[defender]).css({ top: winHeight, left: (winWidth + 250) });
+        $("#" + e[0]).css({ top: (winHeight), left: (winWidth + 550) });
+        $("#" + e[1]).css({ top: (winHeight + 225), left: (winWidth + 550) });
+        message.css({ top: (winHeight + x), left: (winWidth + y) });
+    };
 });
