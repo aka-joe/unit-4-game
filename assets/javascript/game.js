@@ -303,6 +303,7 @@ $(document).ready(function () {
     // Fighting mode
     function fighting() {
         gameStatus++;
+        resetButtons();
         atkBtn.fadeIn(aniSpeed);
         vs.fadeIn(aniSpeed * 2);
     };
@@ -341,6 +342,9 @@ $(document).ready(function () {
 
     // Reset button position
     function resetButtons() {
+        winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
+        winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
+
         atkBtn.css({ top: winHeight + 470, left: winWidth - 200 });
         damage.css({ top: winHeight + 320, left: winWidth + 5 });
         vs.css({ top: winHeight + 185, left: winWidth + 80 });
@@ -449,6 +453,7 @@ $(document).ready(function () {
         winHeight = ($(window).height() - 450) / 2 + $(window).scrollTop();
         winWidth = ($(window).width() - 300) / 2 + $(window).scrollLeft();
 
+        // Check game status and position the elements
         if (gameStatus === -1) {
             openingScreen();
         } else if (gameStatus === 1) {
@@ -461,40 +466,35 @@ $(document).ready(function () {
             var e = ["", ""];
             var x = 480;
             var y = 310;
-            if (gameStatus === 2 || gameStatus === 3) {
+            if (character.id[defender] === enemyList[0]) {
                 var z = 0;
                 character.id.forEach(function (c, i) {
                     if (i != attacker && i != defender) {
                         e[z++] = character.id[i];
                     };
                 });
-            } else if (gameStatus === 4 || gameStatus === 5) {
+            } else if (character.id[defender] === enemyList[1]) {
+                e[0] = enemyList[2];
                 e[1] = enemyList[0];
-                character.id.forEach(function (c, i) {
-                    if (i != attacker && i != defender && character.id[i] != e[1]) {
-                        e[0] = character.id[i];
-                    };
-                });
             } else {
                 e[0] = enemyList[1];
                 e[1] = enemyList[0];
-            }
-            if (gameStatus === 0) {
-                x = 500;
-                y = -50;
-                if (character.hp[attacker] > 0) {
-                    z = 120;
-                } else {
-                    z = -330;
-                    if (character.id[defender] === enemyList[1]) {
-                    e[0] = enemyList[2];
-                    e[1] = enemyList[0];
-                    };
-                };
-                notice.css({ top: winHeight + 180, left: (winWidth + z) });
-            }
+            };
             fightingScr(e, x, y);
         };
+
+        if (gameStatus === 0) {
+            x = 500;
+            y = -50;
+            fightingScr(e, x, y);
+            if (character.hp[attacker] > 0) {
+                z = 120;
+            } else {
+                z = -330;
+            };
+            notice.css({ top: winHeight + 180, left: (winWidth + z) });
+        }
+        
     });
 
     // Re-position on opponets selection screen
