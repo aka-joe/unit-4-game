@@ -29,3 +29,6 @@ Created with HTML, CSS, JavaScript, and jQuery.  [Click here to try this game.](
 
 ### Version History
 
+Nov.9, 2018 - The first version of game has been completed
+Nov.10, 2018 - Added BGM and sound effects
+Nov. 17, 2018 - Auto re-position elements after resizing the window
