@@ -5,6 +5,10 @@
 This is a 'Final Fantasy' themed battle simulation game.  
 Created with HTML, CSS, JavaScript, and jQuery.  [Click here to try this game.](https://aka-joe.github.io/unit-4-game/)
 
+### Screenshots
+
+![Alt text](./assets/images/screenshot.jpg "Screensshots")
+
 ### How the app works:
 
 1. When the game starts, the player will choose a character by clicking on the fighter's picture. The player will fight as that character for the rest of the game.
