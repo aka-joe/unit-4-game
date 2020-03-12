@@ -3,7 +3,7 @@
 ### Overview
 
 This is a 'Final Fantasy' themed battle simulation game.  
-Created with HTML, CSS, JavaScript, and jQuery.  [Click here to try this game.](https://aka-joe.github.io/unit-4-game/)
+Created with HTML, CSS, JavaScript, and jQuery.  [Click here to try this game.](https://cre8dev.github.io/unit-4-game/)
 
 ### Screenshots
 
